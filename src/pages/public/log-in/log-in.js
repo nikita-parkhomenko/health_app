@@ -1,38 +1,41 @@
 
 // outsource dependencies
+import { Alert } from 'reactstrap';
+import { Spinner } from 'reactstrap';
 import React, { useEffect } from "react";
 import { Button, Form } from 'reactstrap';
 import { reduxForm, Field } from "redux-form";
 import { Container, Row, Col } from 'reactstrap';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 // local dependencies
-import TYPE from './actions';
-import CustomInput from '../../components/custom-input';
-import ValidationService from '../../services/validation-service';
+import {TYPE} from './reducer';
+import {logInState} from './reducer';
+import CustomInput from '../../../components/custom-input';
+import ValidationService from '../../../services/validation-service';
 
 const LOG_IN_FORM = 'logInForm';
 
 const validate = ({ email, password }) => {
     const errors = {};
 
-    // if (!ValidationService.isValidEmail(email)) {
-    //     errors.email =  'You have entered an invalid email address!';
-    // }
-    //
-    // if (!ValidationService.isValidPassword(password)) {
-    //     errors.password = 'You have entered an invalid password!'
-    // }
+    if (!ValidationService.isValidEmail(email)) {
+        errors.email =  'You have entered an invalid email address!';
+    }
+
+    if (!ValidationService.isValidPassword(password)) {
+        errors.password = 'You have entered an invalid password!'
+    }
 
     return errors;
 }
 
 const LogIn = ({ handleSubmit }) => {
     const dispatch = useDispatch();
+    const { disabled, initialized, errorMessage } = useSelector(logInState);
 
     useEffect(() => {
-        console.log('initialized')
         dispatch({ type: TYPE.INITIALIZE })
     }, [dispatch])
 
@@ -42,9 +45,13 @@ const LogIn = ({ handleSubmit }) => {
             password,
             username: email,
         }
-
-        console.log(user)
         dispatch({ type: TYPE.FETCH_TOKEN, payload: { user } })
+    }
+
+    if (!initialized) {
+        return <div className="d-flex justify-content-center py-5">
+            <Spinner style={{ width: '4rem', height: '4rem', color: 'blue' }} type="grow" />
+        </div>
     }
 
     return (
@@ -54,6 +61,7 @@ const LogIn = ({ handleSubmit }) => {
                     Sign In
                 </Col>
             </Row>
+            { errorMessage && <Alert color="danger"> {errorMessage} </Alert>}
             <Row className="d-flex justify-content-center">
                 <Col md="8" lg="6" >
                     <Form onSubmit={handleSubmit(submit)} className="pb-4">
@@ -73,7 +81,7 @@ const LogIn = ({ handleSubmit }) => {
                             placeholder="Enter your password..."
                         />
 
-                        <Button type="submit" color="warning">Log In</Button>
+                        <Button disabled={disabled} type="submit" color="warning">Log In</Button>
                     </Form>
                 </Col>
             </Row>

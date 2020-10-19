@@ -1,6 +1,13 @@
+
+// outsource dependencies
 import { fork } from "redux-saga/effects";
-import signInSaga from './sign-in/saga';
+
+// local dependencies
+import signInSaga from './public/log-in/saga';
+import userSaga from './private/User/saga';
 
 export default function * () {
-    yield fork(signInSaga)
+    yield fork(signInSaga);
+    yield fork(userSaga);
 }
+

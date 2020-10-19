@@ -1,5 +1,7 @@
-import signInReducer from './sign-in/reducer'
+import userReducer from './private/User/reducer';
+import logInReducer from './public/log-in/reducer';
 
 export default {
-    signInReducer
+    logIn: logInReducer,
+    user: userReducer,
 }
