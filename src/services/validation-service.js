@@ -17,11 +17,6 @@ class ValidationService {
 
         return true;
     }
-
-    /*
-     *
-     * JSDoc
-     */
     static isValidPassword(value) {
         if (!value) return false;
         // at least one number, one lowercase and one uppercase letter

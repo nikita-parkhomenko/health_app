@@ -4,7 +4,7 @@ export const TYPE = (prefix => ({
     CLEAR: `${prefix}CLEAR`,
     // complex actions
     INITIALIZE: `${prefix}INITIALIZE`,
-    FETCH_TOKEN: `${prefix}FETCH_TOKEN`,
+    LOG_IN: `${prefix}LOG_IN`,
 }))('@log-in/');
 
 const initial = {
@@ -16,10 +16,7 @@ const initial = {
 export default function(state = initial, action) {
     switch (action.type) {
         case TYPE.META:
-            return {
-                ...state,
-                ...action.payload
-            }
+            return { ...state, ...action.payload }
         case TYPE.CLEAR:
             return initial;
         default:
@@ -27,4 +24,4 @@ export default function(state = initial, action) {
     }
 }
 
-export const logInState = state => state.logIn;
+export const selector = state => state.logIn;
