@@ -4,21 +4,19 @@ export const TYPE = (prefix => ({
     CLEAR: `${prefix}CLEAR`,
     // complex actions
     INITIALIZE: `${prefix}INITIALIZE`,
+    REFRESH_USER: `${prefix}REFRESH_USER`,
 }))('@user/');
 
 const initial = {
-    initialized: false,
     disabled: true,
+    initialized: false,
     errorMessage: null,
 }
 
 export default function(state = initial, action) {
     switch (action.type) {
         case TYPE.META:
-            return {
-                ...state,
-                ...action.payload,
-            }
+            return {...state, ...action.payload }
         case TYPE.CLEAR:
             return initial;
         default:
@@ -26,4 +24,4 @@ export default function(state = initial, action) {
     }
 }
 
-export const userState = state => state.user;
+export const selector = state => state.user;

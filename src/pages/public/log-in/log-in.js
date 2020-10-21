@@ -2,25 +2,25 @@
 // outsource dependencies
 import { Alert } from 'reactstrap';
 import { Spinner } from 'reactstrap';
-import React, { useEffect } from "react";
 import { Button, Form } from 'reactstrap';
-import { reduxForm, Field } from "redux-form";
+import { reduxForm, Field } from 'redux-form';
 import { Container, Row, Col } from 'reactstrap';
+import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 
 // local dependencies
-import {TYPE} from './reducer';
-import {logInState} from './reducer';
+import { TYPE } from './reducer';
+import { selector as logInSelector } from './reducer';
 import CustomInput from '../../../components/custom-input';
 import ValidationService from '../../../services/validation-service';
 
-const LOG_IN_FORM = 'logInForm';
+const FORM_NAME = 'logInForm';
 
-const validate = ({ email, password }) => {
+const validate = ({ username, password }) => {
     const errors = {};
 
-    if (!ValidationService.isValidEmail(email)) {
+    if (!ValidationService.isValidEmail(username)) {
         errors.email =  'You have entered an invalid email address!';
     }
 
@@ -33,20 +33,16 @@ const validate = ({ email, password }) => {
 
 const LogIn = ({ handleSubmit }) => {
     const dispatch = useDispatch();
-    const { disabled, initialized, errorMessage } = useSelector(logInState);
+    const { disabled, initialized, errorMessage } = useSelector(logInSelector);
 
     useEffect(() => {
-        dispatch({ type: TYPE.INITIALIZE })
-    }, [dispatch])
+        dispatch({ type: TYPE.INITIALIZE });
+        return () => dispatch({ type: TYPE.CLEAR });
+    }, [dispatch]);
 
-    const submit = ({ password, email }) => {
-        const user = {
-            client: 'admin_application',
-            password,
-            username: email,
-        }
-        dispatch({ type: TYPE.FETCH_TOKEN, payload: { user } })
-    }
+    const submit = useCallback(payload => {
+        dispatch({ type: TYPE.LOG_IN, payload })
+    }, [dispatch]);
 
     if (!initialized) {
         return <div className="d-flex justify-content-center py-5">
@@ -61,13 +57,13 @@ const LogIn = ({ handleSubmit }) => {
                     Sign In
                 </Col>
             </Row>
-            { errorMessage && <Alert color="danger"> {errorMessage} </Alert>}
+            { errorMessage && <Alert color="danger"> {errorMessage} </Alert> }
             <Row className="d-flex justify-content-center">
                 <Col md="8" lg="6" >
                     <Form onSubmit={handleSubmit(submit)} className="pb-4">
                         <Field
                             type="email"
-                            name="email"
+                            name="username"
                             label="Your email"
                             component={CustomInput}
                             placeholder="Enter your email..."
@@ -90,6 +86,6 @@ const LogIn = ({ handleSubmit }) => {
 }
 
 export default reduxForm({
-    form: LOG_IN_FORM,
+    form: FORM_NAME,
     validate,
 })(LogIn);

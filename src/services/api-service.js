@@ -1,12 +1,17 @@
 
 // outsource dependencies
-import axios from "axios";
+import { push } from 'connected-react-router';
+import { API_BASE, instance } from './axios-instance'
 
-const API_BASE = 'https://healthene-gateway-dev.intelliceed.cf/api/auth-service/';
+// local dependencies
+import axios from 'axios';
+import store from '../store/store';
+import { TYPE } from '../app-reducer';
+
 
 class ApiService {
     static getToken(user) {
-        return axios.post(`${API_BASE}auth/token`, user)
+        return instance.post(`/auth-service/auth/token`, user)
             .then(resp => {
                 if (resp.status === 200) {
                     return resp;
@@ -14,30 +19,25 @@ class ApiService {
             })
             .catch(err => err);
     }
-    static getUser() {
-        // объявляем локальную переменную tokenData
+    static refreshToken() {
         let tokenData = null;
 
-        // если в localStorage присутствует token, то берем её
-        if (localStorage.token) {
+        if (localStorage.getItem('token')) {
             tokenData = JSON.parse(localStorage.getItem('token'));
+        } else {
+            store.dispatch(push('/log-in'))
         }
-        const {accessToken, refreshToken} = tokenData;
+        const { refreshToken } = tokenData;
 
-        // добавляем токен в headers запроса
-        const options = {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-            }
-        }
-
-        return axios.get(`${API_BASE}/auth/users/me`, options)
-            .then(resp => {
-                if (resp.status === 200) {
-                    return resp;
-                }
-            })
+        return axios.post(`${API_BASE}/auth-service/auth/token/refresh`, { refreshToken })
+            .then(response => response)
+            .catch(({message}) => store.dispatch({ type: TYPE.META, payload: { errorMessage: message } }));
     }
+
+    static getUser() {
+        return instance.get(`/auth-service/auth/users/me`)
+    }
+
     static saveTokenToStorage(data) {
         localStorage.setItem('token', JSON.stringify(data));
     }

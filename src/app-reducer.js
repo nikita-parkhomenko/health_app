@@ -9,18 +9,16 @@ export const TYPE = (prefix => ({
 
 const initial = {
     user: {},
-    initialized: false,
+
     disabled: true,
+    initialized: false,
     errorMessage: null,
 }
 
 export default function(state = initial, action) {
     switch (action.type) {
         case TYPE.META:
-            return {
-                ...state,
-                ...action.payload
-            }
+            return { ...state, ...action.payload }
         case TYPE.CLEAR:
             return initial;
         default:
@@ -28,4 +26,4 @@ export default function(state = initial, action) {
     }
 }
 
-export const appState = state => state.app;
+export const selector = state => state.app;

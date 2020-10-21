@@ -1,20 +1,19 @@
 
 // outsource dependencies
-import {Switch, Redirect, Route} from "react-router-dom";
-import LogIn from "./public/log-in/log-in";
-import User from './private/User/user';
-import React, {memo} from "react";
+import React, { memo } from 'react';
+import { Switch, Redirect, Route } from 'react-router-dom';
 
 // local dependencies
-import {logIn, user} from '../routes';
+import User from './private/User/user';
+import { logIn, user } from '../routes';
+import LogIn from './public/log-in/log-in';
 
 
-export default memo(() => {
-    return <div className="App">
+export default memo(() => <div className="App">
         <Switch>
             <Route path={logIn.path} component={LogIn} />
             <Route path={user.path} component={User} />
             <Redirect to={logIn.path} />
         </Switch>
     </div>
-})
+)
