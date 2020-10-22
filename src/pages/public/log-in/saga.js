@@ -11,7 +11,7 @@ import { instance } from '../../../services/axios-instance';
 
 function * initializeSaga() {
     yield delay(1000 * 2);
-    yield put({ type: TYPE.META, payload: { initialized: true, disabled: false }})
+    yield put({ type: TYPE.META, payload: { initialized: true }})
 }
 
 function * logInSaga({ payload }) {

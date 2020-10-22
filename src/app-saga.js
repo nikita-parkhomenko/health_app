@@ -1,6 +1,5 @@
 
 // outsource dependencies
-import { push } from 'connected-react-router';
 import { takeEvery, put, call } from 'redux-saga/effects';
 
 // local dependencies
@@ -17,10 +16,6 @@ export function * getUserSaga() {
     } catch ({ message }) {
         yield put({ type: TYPE.META, payload: { errorMessage: message }});
     }
-}
-
-export function * pushToLogIn () {
-    yield put(push('/log-in'));
 }
 
 export default function * () {

@@ -1,8 +1,10 @@
 
 // outsource dependencies
 import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { push } from 'connected-react-router';
 import { Container, Row, Col } from 'reactstrap';
-import {Spinner, Button, Alert} from 'reactstrap';
+import { Spinner, Button, Alert } from 'reactstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
 // local dependencies
@@ -10,7 +12,7 @@ import { TYPE } from './reducer';
 import { selector as userSelector } from './reducer';
 import { selector as appSelector } from '../../../app-reducer';
 
-const User = () => {
+const User = (props) => {
     const dispatch = useDispatch();
     const { user } = useSelector(appSelector);
     const { initialized, errorMessage } = useSelector(userSelector);
@@ -21,6 +23,7 @@ const User = () => {
     }, [dispatch]);
 
     const refreshUser = () => dispatch({ type: TYPE.REFRESH_USER });
+    const pushToUsersPage = () => props.push('/users');
 
     if (!initialized) {
         return <div className="d-flex justify-content-center py-5">
@@ -31,13 +34,18 @@ const User = () => {
     return (
         <Container className="py-3">
             <Row>
-                <Col>
+                <Col xs={6}>
                     <h3>User Cabinet</h3>
                     { errorMessage && <Alert color="danger"> {errorMessage} </Alert> }
                 </Col>
-                <Col>
+                <Col xs={2}>
                     <Button onClick={refreshUser} color="success">
                         Refresh
+                    </Button>
+                </Col>
+                <Col xs={4}>
+                    <Button onClick={pushToUsersPage} color="primary">
+                        Show all users
                     </Button>
                 </Col>
             </Row>
@@ -46,4 +54,4 @@ const User = () => {
     )
 }
 
-export default User;
+export default  connect(null, { push })(User);

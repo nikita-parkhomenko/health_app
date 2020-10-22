@@ -4,11 +4,17 @@ export const TYPE = (prefix => ({
     CLEAR: `${prefix}CLEAR`,
     // complex actions
     INITIALIZE: `${prefix}INITIALIZE`,
-    GET_USER: `${prefix}GET_USER`,
-}))('@app/');
+    SORT_USERS: `${prefix}SORT_USERS`,
+    SEARCH_USERS: `${prefix}SEARCH_USERS`,
+    NEXT_PAGE: `${prefix}NEXT_PAGE`,
+}))('@users/');
 
 const initial = {
-    user: {},
+    users: [],
+    sortNamesASC: true,
+    sortIdASC: true,
+    currentPage: 1,
+    totalPages: 0,
 
     disabled: false,
     initialized: false,
@@ -18,7 +24,7 @@ const initial = {
 export default function(state = initial, action) {
     switch (action.type) {
         case TYPE.META:
-            return { ...state, ...action.payload }
+            return {...state, ...action.payload }
         case TYPE.CLEAR:
             return initial;
         default:
@@ -26,4 +32,4 @@ export default function(state = initial, action) {
     }
 }
 
-export const selector = state => state.app;
+export const selector = state => state.users;

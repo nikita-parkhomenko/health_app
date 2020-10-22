@@ -31,13 +31,50 @@ class ApiService {
 
         return axios.post(`${API_BASE}/auth-service/auth/token/refresh`, { refreshToken })
             .then(response => response)
-            .catch(({message}) => store.dispatch({ type: TYPE.META, payload: { errorMessage: message } }));
+            .catch(({ message }) => store.dispatch({ type: TYPE.META, payload: { errorMessage: message } }));
     }
 
     static getUser() {
         return instance.get(`/auth-service/auth/users/me`)
     }
-
+    static getUsers() {
+        return instance(`admin-service/users/filter`, {
+            method: 'POST',
+            data: {},
+        });
+    }
+    static sortUsers({ sortBy, sortField }) {
+        console.log(`${sortBy.toLowerCase()},${sortField ? 'ASC' : 'DESC'}`)
+        return instance('admin-service/users/filter', {
+            method: 'POST',
+            data: {},
+            params: {
+                sort: `${sortBy.toLowerCase()},${sortField ? 'ASC' : 'DESC'}`,
+                size: 10,
+            }
+        });
+    }
+    static findUser(searchUser) {
+        return instance('admin-service/users/filter', {
+            method: "POST",
+            data: {
+                name: searchUser,
+            },
+            params: {
+                size: 10,
+            }
+        })
+    }
+    static getPage(pageNumber) {
+        return instance('admin-service/users/filter', {
+            method: "POST",
+            data: {},
+            params: {
+                page: pageNumber,
+                size: 10,
+            }
+        })
+    }
     static saveTokenToStorage(data) {
         localStorage.setItem('token', JSON.stringify(data));
     }

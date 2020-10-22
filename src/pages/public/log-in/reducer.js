@@ -9,7 +9,7 @@ export const TYPE = (prefix => ({
 
 const initial = {
     initialized: false,
-    disabled: true,
+    disabled: false,
     errorMessage: null,
 }
 

@@ -21,7 +21,7 @@ const validate = ({ username, password }) => {
     const errors = {};
 
     if (!ValidationService.isValidEmail(username)) {
-        errors.email =  'You have entered an invalid email address!';
+        errors.username =  'You have entered an invalid email address!';
     }
 
     if (!ValidationService.isValidPassword(password)) {

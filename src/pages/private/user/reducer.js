@@ -8,7 +8,7 @@ export const TYPE = (prefix => ({
 }))('@user/');
 
 const initial = {
-    disabled: true,
+    disabled: false,
     initialized: false,
     errorMessage: null,
 }
