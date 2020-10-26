@@ -1,41 +1,34 @@
 
 // outsource dependencies
-import React from 'react';
-import { Col, PaginationItem, PaginationLink, Row, Pagination } from 'reactstrap';
+import React, { useCallback } from 'react';
+import Pagination from 'react-js-pagination';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faAngleLeft,
+    faAngleRight,
+    faAngleDoubleLeft,
+    faAngleDoubleRight,
+} from '@fortawesome/free-solid-svg-icons';
 
-const PaginationField = ({ pages, currentPage, nextPage }) => {
-    const pageLinks = [];
-
-    for (let i = 0; i < pages; i++) {
-        let active = currentPage === i;
-
-        pageLinks.push(<PaginationItem
-            active={active}
-            key={i}
-            onClick={() => nextPage(i)}
-        >
-            <PaginationLink href="#">
-                {i + 1}
-            </PaginationLink>
-        </PaginationItem>);
-
-    }
+const Paginate = (
+    { activePage, itemsPerPage = 20, onChange, totalItemsCount, displayedPages = 5 }
+    ) => {
+    const handleChange = useCallback(value => onChange(value - 1), [onChange]);
     return (
-        <Row>
-            <Col className="d-flex justify-content-center" sm={12}>
-                <Pagination>
-                    {currentPage > 0 && <PaginationItem onClick={() => nextPage(currentPage - 1)}>
-                        <PaginationLink previous href="#" />
-                    </PaginationItem>}
-
-                    {pageLinks}
-                    {currentPage < pages - 1 && <PaginationItem onClick={() => nextPage(currentPage + 1)} >
-                        <PaginationLink next href="#" />
-                    </PaginationItem>}
-                </Pagination>
-            </Col>
-        </Row>
+        <Pagination
+            itemClass="page-item"
+            linkClass="page-link"
+            onChange={handleChange}
+            activePage={activePage + 1}
+            totalItemsCount={totalItemsCount}
+            itemsCountPerPage={itemsPerPage}
+            pageRangeDisplayed={displayedPages}
+            prevPageText={<FontAwesomeIcon icon={faAngleLeft} />}
+            nextPageText={<FontAwesomeIcon icon={faAngleRight} />}
+            firstPageText={<FontAwesomeIcon icon={faAngleDoubleLeft} />}
+            lastPageText={<FontAwesomeIcon icon={faAngleDoubleRight} />}
+        />
     );
 }
 
-export default PaginationField;
+export default Paginate;

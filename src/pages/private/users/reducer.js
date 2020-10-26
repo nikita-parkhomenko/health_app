@@ -4,11 +4,11 @@ export const TYPE = (prefix => ({
     CLEAR: `${prefix}CLEAR`,
     // complex actions
     INITIALIZE: `${prefix}INITIALIZE`,
-    FILTER_USERS: `${prefix}FILTER_USERS`,
+    FILTER_ITEMS: `${prefix}FILTER_ITEMS`,
 }))('@users/');
 
 const initial = {
-    users: [],
+    items: [],
     //filter
     name: '',
     page: 0,
@@ -16,7 +16,7 @@ const initial = {
     size: 20,
     sortASC: false,
 
-    totalPages: 0,
+    totalElements: 0,
 
     disabled: false,
     initialized: false,

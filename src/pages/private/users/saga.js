@@ -4,8 +4,8 @@ import { takeEvery, put, call, delay, select } from 'redux-saga/effects';
 
 // local dependencies
 import { TYPE } from './reducer';
-import ApiService from '../../../services/api-service';
 import { selector as usersSelector } from './reducer';
+import ApiService from '../../../services/api-service';
 
 function * initializeSaga() {
     yield delay(1000);
@@ -19,29 +19,28 @@ function * initializeSaga() {
 
 function * getUsersSaga() {
     try {
-        const usersResponse = yield call(ApiService.getUsers);
-        const { content, totalPages } = usersResponse.data;
-        yield put({ type: TYPE.META, payload: { users: content, totalPages } })
+        const items = yield call(ApiService.getUsers);
+        const { content, totalElements } = items.data;
+        yield put({ type: TYPE.META, payload: { items: content, totalElements } })
     } catch ({ message }) {
         yield put({ type: TYPE.META, payload: { errorMessage: message }});
     }
 }
 
-function * filterUsersSaga({ payload }) {
+function * filterItemsSaga({ payload }) {
     yield put({ type: TYPE.META, payload: { disabled: true } });
-    yield delay(1000 / 2);
+    yield delay(1000 * 0.5);
     try {
         yield put({ type: TYPE.META, payload });
-        let { name, page, sort, size, sortASC } = yield select(usersSelector);
-        sort = `${sort},${sortASC ? 'ASC' : 'DESC'}`;
+        const { name, page, sort, size, sortASC } = yield select(usersSelector);
 
-        const users = yield call(
+        const items = yield call(
             ApiService.filterUsers,
             { name },
-            { page, sort, size }
+            { page, sort: `${sort},${sortASC ? 'ASC' : 'DESC'}`, size }
         );
-        const { content, totalPages } = users.data;
-        yield put({ type: TYPE.META, payload: { users: content, totalPages } });
+        const { content, totalElements } = items.data;
+        yield put({ type: TYPE.META, payload: { items: content, totalElements } });
     } catch({ message }) {
         yield put({ type: TYPE.META, payload: { errorMessage: message } });
     }
@@ -50,5 +49,5 @@ function * filterUsersSaga({ payload }) {
 
 export default function * () {
     yield takeEvery(TYPE.INITIALIZE, initializeSaga);
-    yield takeEvery(TYPE.FILTER_USERS, filterUsersSaga);
+    yield takeEvery(TYPE.FILTER_ITEMS, filterItemsSaga);
 }
