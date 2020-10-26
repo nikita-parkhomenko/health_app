@@ -1,53 +1,54 @@
 
 // outsource dependencies
 import { Table } from 'reactstrap';
-import { Field, reduxForm } from 'redux-form';
+import { Badge, Form, Input } from 'reactstrap';
 import { Container, Row, Col } from 'reactstrap';
 import { Spinner, Alert, Button } from 'reactstrap';
-import React, {useEffect, useCallback} from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Badge, FormGroup, Form, Input } from 'reactstrap';
+import { InputGroup, InputGroupAddon } from 'reactstrap';
 
 // local dependencies
 import { TYPE } from './reducer';
 import { selector as usersSelector } from './reducer';
-import EditButton from '../../../components/edit-button';
+import ActionButton from '../../../components/action-button';
 import PaginationField from '../../../components/pagination';
-import DeleteButton from '../../../components/delete-button';
-import { sortUp, sortDown, search, plus } from '../../../assets/icons';
+import CustomButton from '../../../components/custom-button';
+import { search, plus, deleteIcon, editIcon } from '../../../assets/icons';
 
-const CustomInput = ({ input, ...rest }) => (
-    <FormGroup className="d-flex">
-        <Input {...input} {...rest} />
-    </FormGroup>
-);
-
-const FORM_NAME = 'searchUserForm';
-
-const Users = ({ handleSubmit, pristine, reset, submitting }) => {
+const Users = () => {
     const dispatch = useDispatch();
     const { users,
             initialized,
             disabled,
             errorMessage,
-            sortNamesASC,
-            sortIdASC,
-            currentPage,
+            sortASC,
+            page,
+            name,
             totalPages,
     } = useSelector(usersSelector);
 
+    const searchByName = useCallback(event => {
+        event.preventDefault();
+        dispatch({ type: TYPE.FILTER_USERS, payload: { name, page: 0 } });
+    }, [dispatch, name]);
+
+    const nextPage = useCallback(setPage => {
+        dispatch({ type: TYPE.FILTER_USERS, payload: { page: setPage } });
+    }, [dispatch]);
+
     const sortUsers = useCallback(event => {
-        const sortBy = event.target.textContent;
-        dispatch({ type: TYPE.SORT_USERS, payload: { sortBy } });
+        const sort = event.target.textContent.toLowerCase();
+        dispatch({ type: TYPE.FILTER_USERS, payload: { sort, sortASC: !sortASC } });
+    }, [dispatch, sortASC]);
+
+    const changeSearchFieldHandler = useCallback(event => {
+        const name = event.target.value.trimLeft();
+        dispatch({ type: TYPE.META, payload: { name } });
     }, [dispatch]);
 
-    const nextPage = useCallback(pageNumber => {
-        dispatch({ type: TYPE.NEXT_PAGE, payload: { pageNumber } });
-    }, [dispatch]);
-
-    const submit = useCallback(query => {
-        const { searchUser } = query;
-        dispatch({ type: TYPE.SEARCH_USERS, payload: { searchUser } });
+    const clearName = useCallback(() => {
+        dispatch({ type: TYPE.FILTER_USERS, payload: { name: '' } })
     }, [dispatch]);
 
     useEffect(() => {
@@ -70,35 +71,46 @@ const Users = ({ handleSubmit, pristine, reset, submitting }) => {
                 </Col>
             </Row>
             <Row>
-                <Col sm={8} className="d-flex align-items-center">
-                    <Form className="d-flex" onSubmit={handleSubmit(submit)}>
-                        <Button
-                            className="align-self-center mb-3"
-                            type="reset"
-                            disabled={pristine || submitting}
-                            onClick={reset}
-                        >
-                            X
-                        </Button>
-                        <Field
-                            disabled={disabled}
-                            type="text"
-                            name='searchUser'
-                            component={CustomInput}
-                            placeholder='Search'
-                        />
-                        <Button
-                            disabled={disabled}
-                            className="align-self-center mb-3"
-                            type="submit"
-                            color="primary"
-                        >
-                            {search}
-                        </Button>
+                <Col sm={8} className="d-flex align-items-center mb-3">
+                    <Form className="d-flex" onSubmit={event => searchByName(event)}>
+                        <InputGroup>
+                            <InputGroupAddon addonType="prepend">
+                                {
+                                    name.length > 0 && <Button
+                                        type="reset"
+                                        color="danger"
+                                        disabled={disabled}
+                                        onClick={clearName}
+                                    >
+                                        X
+                                    </Button>
+                                }
+                            </InputGroupAddon>
+                            <Input
+                                placeholder="Search"
+                                type="text"
+                                disabled={disabled}
+                                value={name}
+                                name='searchUser'
+                                onChange={event => changeSearchFieldHandler(event)}
+                            />
+                            <InputGroupAddon addonType="append">
+                                <Button
+                                    color="primary"
+                                    type="submit"
+                                    disabled={disabled}
+                                >
+                                    {search} Search
+                                </Button>
+                            </InputGroupAddon>
+                        </InputGroup>
                     </Form>
                 </Col>
                 <Col sm={3}>
-                    <Button color="success">
+                    <Button
+                        color="success"
+                        disabled={disabled}
+                    >
                         {plus} Create User
                     </Button>
                 </Col>
@@ -107,24 +119,16 @@ const Users = ({ handleSubmit, pristine, reset, submitting }) => {
                 <thead>
                 <tr>
                     <th>
-                        <Button
-                            onClick={e => sortUsers(e)}
-                            className="text-info py-0"
-                            color="link"
-                        >
-                            { sortNamesASC ? sortDown : sortUp }
-                            <span className="font-weight-bold">Name</span>
-                        </Button>
+                        <CustomButton
+                            sortUsers={sortUsers}
+                            filterName="Name"
+                        />
                     </th>
                     <th className="pointer">
-                        <Button
-                            onClick={event => sortUsers(event)}
-                            className="text-info py-0"
-                            color="link"
-                        >
-                            { sortIdASC ? sortDown : sortUp }
-                            <span className="font-weight-bold">Id</span>
-                        </Button>
+                        <CustomButton
+                            sortUsers={sortUsers}
+                            filterName="Id"
+                        />
                     </th>
                     <th>Role</th>
                     <th>Actions</th>
@@ -132,7 +136,7 @@ const Users = ({ handleSubmit, pristine, reset, submitting }) => {
                 </thead>
                 <tbody>
                 {
-                    users.length &&
+                    users.length !== 0 ?
                         users.map((user) => (
                             <tr key={user.id}>
                                 <td>{user.name}</td>
@@ -143,11 +147,20 @@ const Users = ({ handleSubmit, pristine, reset, submitting }) => {
                                     </Badge>
                                 </td>
                                 <td>
-                                    <EditButton text="Edit"/>
-                                    <DeleteButton text="Delete"/>
+                                    <ActionButton
+                                        text="Edit"
+                                        icon={editIcon}
+                                        disabled={disabled}
+                                    />
+                                    <ActionButton
+                                        text="Delete"
+                                        icon={deleteIcon}
+                                        disabled={disabled}
+                                    />
                                 </td>
                             </tr>
                         ))
+                        : []
                 }
                 </tbody>
             </Table>
@@ -161,12 +174,10 @@ const Users = ({ handleSubmit, pristine, reset, submitting }) => {
             <PaginationField
                 nextPage={nextPage}
                 pages={totalPages}
-                currentPage={currentPage}
+                currentPage={page}
             />
         </Container>
     )
 }
 
-export default reduxForm({
-    form: FORM_NAME,
-})(Users);
+export default Users;

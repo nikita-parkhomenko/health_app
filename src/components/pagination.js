@@ -6,7 +6,7 @@ import { Col, PaginationItem, PaginationLink, Row, Pagination } from 'reactstrap
 const PaginationField = ({ pages, currentPage, nextPage }) => {
     const pageLinks = [];
 
-    for (let i = 1; i <= pages; i++) {
+    for (let i = 0; i < pages; i++) {
         let active = currentPage === i;
 
         pageLinks.push(<PaginationItem
@@ -15,7 +15,7 @@ const PaginationField = ({ pages, currentPage, nextPage }) => {
             onClick={() => nextPage(i)}
         >
             <PaginationLink href="#">
-                {i}
+                {i + 1}
             </PaginationLink>
         </PaginationItem>);
 
@@ -24,12 +24,12 @@ const PaginationField = ({ pages, currentPage, nextPage }) => {
         <Row>
             <Col className="d-flex justify-content-center" sm={12}>
                 <Pagination>
-                    {currentPage > 1 && <PaginationItem onClick={() => nextPage(currentPage - 1)}>
+                    {currentPage > 0 && <PaginationItem onClick={() => nextPage(currentPage - 1)}>
                         <PaginationLink previous href="#" />
                     </PaginationItem>}
 
                     {pageLinks}
-                    {currentPage < pages && <PaginationItem onClick={() => nextPage(currentPage + 1)} >
+                    {currentPage < pages - 1 && <PaginationItem onClick={() => nextPage(currentPage + 1)} >
                         <PaginationLink next href="#" />
                     </PaginationItem>}
                 </Pagination>
