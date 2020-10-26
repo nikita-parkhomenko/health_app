@@ -43,36 +43,11 @@ class ApiService {
             data: {},
         });
     }
-    static sortUsers({ sortBy, sortField }) {
-        console.log(`${sortBy.toLowerCase()},${sortField ? 'ASC' : 'DESC'}`)
-        return instance('admin-service/users/filter', {
-            method: 'POST',
-            data: {},
-            params: {
-                sort: `${sortBy.toLowerCase()},${sortField ? 'ASC' : 'DESC'}`,
-                size: 10,
-            }
-        });
-    }
-    static findUser(searchUser) {
+    static filterUsers(data, params) {
         return instance('admin-service/users/filter', {
             method: "POST",
-            data: {
-                name: searchUser,
-            },
-            params: {
-                size: 10,
-            }
-        })
-    }
-    static getPage(pageNumber) {
-        return instance('admin-service/users/filter', {
-            method: "POST",
-            data: {},
-            params: {
-                page: pageNumber,
-                size: 10,
-            }
+            data,
+            params,
         })
     }
     static saveTokenToStorage(data) {

@@ -4,20 +4,9 @@ export const TYPE = (prefix => ({
     CLEAR: `${prefix}CLEAR`,
     // complex actions
     INITIALIZE: `${prefix}INITIALIZE`,
-    FILTER_USERS: `${prefix}FILTER_USERS`,
-}))('@users/');
+}))('@create-user/');
 
 const initial = {
-    users: [],
-    //filter
-    name: '',
-    page: 0,
-    sort: '',
-    size: 20,
-    sortASC: false,
-
-    totalPages: 0,
-
     disabled: false,
     initialized: false,
     errorMessage: null,
@@ -34,4 +23,4 @@ export default function(state = initial, action) {
     }
 }
 
-export const selector = state => state.users;
+export const selector = state => state.createUser;
