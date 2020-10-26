@@ -1,6 +1,6 @@
 
 // outsource dependencies
-import React, { useMemo } from "react";
+import React, { useMemo } from 'react';
 import { FormGroup, Label, Input, Badge } from 'reactstrap';
 
 const CustomInput = ({ label, meta: { touched, error }, input, ...rest }) => {
