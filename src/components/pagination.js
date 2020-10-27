@@ -11,23 +11,14 @@ import {
     faAngleDoubleRight,
 } from '@fortawesome/free-solid-svg-icons';
 
-const Paginate = ({ activePage, itemsPerPage, onChange, totalItemsCount, displayedPages }) => {
+const Paginate = ({ activePage, onChange, totalItemsCount, ...attr }) => {
     const handleChange = useCallback(value => onChange(value - 1), [onChange]);
-    return (
-        <Pagination
-            itemClass="page-item"
-            linkClass="page-link"
+    return <Pagination
             onChange={handleChange}
             activePage={activePage + 1}
             totalItemsCount={totalItemsCount}
-            itemsCountPerPage={itemsPerPage}
-            pageRangeDisplayed={displayedPages}
-            prevPageText={<FontAwesomeIcon icon={faAngleLeft} />}
-            nextPageText={<FontAwesomeIcon icon={faAngleRight} />}
-            firstPageText={<FontAwesomeIcon icon={faAngleDoubleLeft} />}
-            lastPageText={<FontAwesomeIcon icon={faAngleDoubleRight} />}
+            {...attr}
         />
-    );
 }
 
 Paginate.defaultProps = {

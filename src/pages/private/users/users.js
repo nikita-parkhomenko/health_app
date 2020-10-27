@@ -190,8 +190,6 @@ const Users = () => {
                         activePage={page}
                         onChange={onChangePage}
                         totalItemsCount={totalElements}
-                        itemsPerPage={20}
-                        displayedPages={5}
                     />
                 </Col>
             </Row>
