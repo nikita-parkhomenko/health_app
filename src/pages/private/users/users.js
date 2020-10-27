@@ -23,6 +23,8 @@ import {
     faTrashAlt
 } from '@fortawesome/free-solid-svg-icons';
 
+const insteadEvent = cb => e => e.preventDefault() || cb(e);
+
 const Users = () => {
     const dispatch = useDispatch();
     const { items,
@@ -76,7 +78,7 @@ const Users = () => {
             </Row>
             <Row>
                 <Col sm={8} className="d-flex align-items-center mb-3">
-                    <Form className="d-flex" onSubmit={searchByName}>
+                    <Form className="d-flex" onSubmit={insteadEvent(searchByName)}>
                         <InputGroup>
                             <InputGroupAddon addonType="prepend">
                                 {
@@ -188,6 +190,8 @@ const Users = () => {
                         activePage={page}
                         onChange={onChangePage}
                         totalItemsCount={totalElements}
+                        itemsPerPage={20}
+                        displayedPages={5}
                     />
                 </Col>
             </Row>
