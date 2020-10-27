@@ -7,11 +7,7 @@ import { TYPE } from './reducer';
 
 function * initializeSaga() {
     yield delay(1000);
-    try {
-        yield put({ type: TYPE.META, payload: { initialized: true }});
-    } catch ({ message }) {
-        yield put({ type: TYPE.META, payload: { errorMessage: message }});
-    }
+    yield put({ type: TYPE.META, payload: { initialized: true }});
 }
 
 export default function * () {

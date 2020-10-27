@@ -10,45 +10,49 @@ import { InputGroup, InputGroupAddon } from 'reactstrap';
 
 // local dependencies
 import { TYPE } from './reducer';
+import Paginate from '../../../components/pagination';
 import { selector as usersSelector } from './reducer';
 import ActionButton from '../../../components/action-button';
-import PaginationField from '../../../components/pagination';
 import CustomButton from '../../../components/custom-button';
-import { search, plus, deleteIcon, editIcon } from '../../../assets/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    faPencilAlt,
+    faPlus,
+    faSearch,
+    faTimes,
+    faTrashAlt
+} from '@fortawesome/free-solid-svg-icons';
 
 const Users = () => {
     const dispatch = useDispatch();
-    const { users,
+    const { items,
             initialized,
             disabled,
             errorMessage,
             sortASC,
             page,
             name,
-            totalPages,
+            totalElements,
     } = useSelector(usersSelector);
 
-    const searchByName = useCallback(event => {
-        event.preventDefault();
-        dispatch({ type: TYPE.FILTER_USERS, payload: { name, page: 0 } });
+    const searchByName = useCallback(() => {
+        dispatch({ type: TYPE.FILTER_ITEMS, payload: { name, page: 0 } });
     }, [dispatch, name]);
 
-    const nextPage = useCallback(setPage => {
-        dispatch({ type: TYPE.FILTER_USERS, payload: { page: setPage } });
-    }, [dispatch]);
+    const onChangePage = useCallback(page => dispatch({
+        type: TYPE.FILTER_ITEMS, payload: { page }
+    }), [dispatch]);
 
-    const sortUsers = useCallback(event => {
-        const sort = event.target.textContent.toLowerCase();
-        dispatch({ type: TYPE.FILTER_USERS, payload: { sort, sortASC: !sortASC } });
+    const sortUsers = useCallback(name => {
+        dispatch({ type: TYPE.FILTER_ITEMS, payload: { sort: name, sortASC: !sortASC } });
     }, [dispatch, sortASC]);
 
-    const changeSearchFieldHandler = useCallback(event => {
-        const name = event.target.value.trimLeft();
-        dispatch({ type: TYPE.META, payload: { name } });
+    const changeSearchFieldHandler = useCallback(value => {
+        dispatch({ type: TYPE.META, payload: { name: value.trimLeft() } });
     }, [dispatch]);
 
     const clearName = useCallback(() => {
-        dispatch({ type: TYPE.FILTER_USERS, payload: { name: '' } })
+        dispatch({ type: TYPE.FILTER_ITEMS, payload: { name: '' } })
     }, [dispatch]);
 
     useEffect(() => {
@@ -72,7 +76,7 @@ const Users = () => {
             </Row>
             <Row>
                 <Col sm={8} className="d-flex align-items-center mb-3">
-                    <Form className="d-flex" onSubmit={event => searchByName(event)}>
+                    <Form className="d-flex" onSubmit={searchByName}>
                         <InputGroup>
                             <InputGroupAddon addonType="prepend">
                                 {
@@ -82,7 +86,7 @@ const Users = () => {
                                         disabled={disabled}
                                         onClick={clearName}
                                     >
-                                        X
+                                        <FontAwesomeIcon icon={faTimes} />
                                     </Button>
                                 }
                             </InputGroupAddon>
@@ -91,16 +95,17 @@ const Users = () => {
                                 type="text"
                                 disabled={disabled}
                                 value={name}
-                                name='searchUser'
-                                onChange={event => changeSearchFieldHandler(event)}
+                                name="searchUser"
+                                onChange={event => changeSearchFieldHandler(event.target.value)}
                             />
                             <InputGroupAddon addonType="append">
                                 <Button
                                     color="primary"
-                                    type="submit"
+                                    type="button"
                                     disabled={disabled}
+                                    onClick={searchByName}
                                 >
-                                    {search} Search
+                                    <FontAwesomeIcon icon={faSearch} />
                                 </Button>
                             </InputGroupAddon>
                         </InputGroup>
@@ -111,7 +116,11 @@ const Users = () => {
                         color="success"
                         disabled={disabled}
                     >
-                        {plus} Create User
+                        <FontAwesomeIcon
+                            transform="left-5"
+                            icon={faPlus}
+                        />
+                        Create User
                     </Button>
                 </Col>
             </Row>
@@ -122,12 +131,14 @@ const Users = () => {
                         <CustomButton
                             sortUsers={sortUsers}
                             filterName="Name"
+                            name="name"
                         />
                     </th>
                     <th className="pointer">
                         <CustomButton
                             sortUsers={sortUsers}
                             filterName="Id"
+                            name="id"
                         />
                     </th>
                     <th>Role</th>
@@ -136,8 +147,8 @@ const Users = () => {
                 </thead>
                 <tbody>
                 {
-                    users.length !== 0 ?
-                        users.map((user) => (
+                    items.length !== 0 ?
+                        items.map((user) => (
                             <tr key={user.id}>
                                 <td>{user.name}</td>
                                 <td className="text-secondary">{user.id}</td>
@@ -149,12 +160,12 @@ const Users = () => {
                                 <td>
                                     <ActionButton
                                         text="Edit"
-                                        icon={editIcon}
                                         disabled={disabled}
+                                        icon={<FontAwesomeIcon transform="left-3" icon={faPencilAlt} />}
                                     />
                                     <ActionButton
                                         text="Delete"
-                                        icon={deleteIcon}
+                                        icon={<FontAwesomeIcon transform="left-3" icon={faTrashAlt} />}
                                         disabled={disabled}
                                     />
                                 </td>
@@ -165,17 +176,21 @@ const Users = () => {
                 </tbody>
             </Table>
             {
-                !users.length && (
+                !items.length && (
                     <Alert color="secondary">
                         No known Users
                     </Alert>
                 )
             }
-            <PaginationField
-                nextPage={nextPage}
-                pages={totalPages}
-                currentPage={page}
-            />
+            <Row>
+                <Col className="d-flex justify-content-center" sm={12}>
+                    <Paginate
+                        activePage={page}
+                        onChange={onChangePage}
+                        totalItemsCount={totalElements}
+                    />
+                </Col>
+            </Row>
         </Container>
     )
 }
