@@ -1,7 +1,7 @@
 
 // outsource dependencies
-import Select from 'react-select';
 import { Table } from 'reactstrap';
+import AsyncSelect from 'react-select/async';
 import { Badge, Form, Input } from 'reactstrap';
 import { Container, Row, Col } from 'reactstrap';
 import { Spinner, Alert, Button } from 'reactstrap';
@@ -13,6 +13,7 @@ import { InputGroup, InputGroupAddon } from 'reactstrap';
 import { TYPE } from './reducer';
 import Paginate from '../../../components/pagination';
 import { selector as usersSelector } from './reducer';
+import ApiService from '../../../services/api-service';
 import ActionButton from '../../../components/action-button';
 import CustomButton from '../../../components/custom-button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -67,8 +68,7 @@ const Users = () => {
     }, [dispatch]);
 
     const rolesSelectChange = useCallback(role => {
-        role ? dispatch({ type: TYPE.FILTER_ITEMS, payload: { roles: [role.label]} })
-            : dispatch({ type: TYPE.FILTER_ITEMS, payload: { roles: []} });
+        dispatch({ type: TYPE.FILTER_ITEMS, payload: { roles: role ? [role.label] : []} })
     }, [dispatch]);
 
     useEffect(() => {
@@ -141,13 +141,15 @@ const Users = () => {
                     </Input>
                 </Col>
                 <Col sm={3}>
-                    <Select
-                        onChange={event => rolesSelectChange(event)}
-                        placeholder="Role"
+                    <AsyncSelect
                         isClearable
-                        isDisabled={disabled}
-                        options={roleOptions}
+                        cacheOptions
+                        placeholder="Role"
                         name="selectRoles"
+                        isDisabled={disabled}
+                        defaultOptions={roleOptions}
+                        onChange={rolesSelectChange}
+                        loadOptions={name => ApiService.loadRoles(name)}
                     />
                 </Col>
                 <Col sm={3}>
