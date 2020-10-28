@@ -1,5 +1,6 @@
 
 // outsource dependencies
+import Select from 'react-select';
 import { Table } from 'reactstrap';
 import { Badge, Form, Input } from 'reactstrap';
 import { Container, Row, Col } from 'reactstrap';
@@ -34,8 +35,12 @@ const Users = () => {
             sortASC,
             page,
             name,
+            size,
+            allRoles,
             totalElements,
     } = useSelector(usersSelector);
+
+    const roleOptions = allRoles.map(role => ({ label: role.name }))
 
     const searchByName = useCallback(() => {
         dispatch({ type: TYPE.FILTER_ITEMS, payload: { name, page: 0 } });
@@ -55,6 +60,15 @@ const Users = () => {
 
     const clearName = useCallback(() => {
         dispatch({ type: TYPE.FILTER_ITEMS, payload: { name: '' } })
+    }, [dispatch]);
+
+    const itemsCountChange = useCallback(size => {
+        dispatch({ type: TYPE.FILTER_ITEMS, payload: { size: +size } })
+    }, [dispatch]);
+
+    const rolesSelectChange = useCallback(role => {
+        role ? dispatch({ type: TYPE.FILTER_ITEMS, payload: { roles: [role.label]} })
+            : dispatch({ type: TYPE.FILTER_ITEMS, payload: { roles: []} });
     }, [dispatch]);
 
     useEffect(() => {
@@ -77,7 +91,7 @@ const Users = () => {
                 </Col>
             </Row>
             <Row>
-                <Col sm={8} className="d-flex align-items-center mb-3">
+                <Col sm={4} className="d-flex align-items-center mb-3">
                     <Form className="d-flex" onSubmit={insteadEvent(searchByName)}>
                         <InputGroup>
                             <InputGroupAddon addonType="prepend">
@@ -113,6 +127,29 @@ const Users = () => {
                         </InputGroup>
                     </Form>
                 </Col>
+                <Col sm={2}>
+                    <Input
+                        type="select"
+                        name="selectItemsCount"
+                        value={size}
+                        disabled={disabled}
+                        onChange={event => itemsCountChange(event.target.value)}
+                    >
+                        <option value={10}>10 Items</option>
+                        <option value={15}>15 Items</option>
+                        <option value={20}>20 Items</option>
+                    </Input>
+                </Col>
+                <Col sm={3}>
+                    <Select
+                        onChange={event => rolesSelectChange(event)}
+                        placeholder="Role"
+                        isClearable
+                        isDisabled={disabled}
+                        options={roleOptions}
+                        name="selectRoles"
+                    />
+                </Col>
                 <Col sm={3}>
                     <Button
                         color="success"
@@ -122,7 +159,7 @@ const Users = () => {
                             transform="left-5"
                             icon={faPlus}
                         />
-                        Create User
+                        Add User
                     </Button>
                 </Col>
             </Row>
@@ -155,9 +192,15 @@ const Users = () => {
                                 <td>{user.name}</td>
                                 <td className="text-secondary">{user.id}</td>
                                 <td>
-                                    <Badge className='text-lowercase' color="danger">
-                                        {user.roles[0].name}
-                                    </Badge>
+                                    {user.roles.map(
+                                        role => <Badge
+                                            key={role.id}
+                                            className='text-lowercase mr-2'
+                                            color="danger"
+                                        >
+                                            {role.name}
+                                        </Badge>
+                                    )}
                                 </td>
                                 <td>
                                     <ActionButton
@@ -190,6 +233,7 @@ const Users = () => {
                         activePage={page}
                         onChange={onChangePage}
                         totalItemsCount={totalElements}
+                        itemsCountPerPage={size}
                     />
                 </Col>
             </Row>

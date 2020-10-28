@@ -9,13 +9,16 @@ export const TYPE = (prefix => ({
 
 const initial = {
     items: [],
-    //filter
-    name: '',
+    //params
     page: 0,
     sort: '',
-    size: 20,
+    size: 10,
     sortASC: false,
+    //data
+    roles: [],
+    name: '',
 
+    allRoles: [],
     totalElements: 0,
 
     disabled: false,

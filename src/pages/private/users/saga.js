@@ -11,6 +11,7 @@ function * initializeSaga() {
     yield delay(1000);
     try {
         yield call(getUsersSaga);
+        yield call(getRolesSaga);
     } catch ({ message }) {
         yield put({ type: TYPE.META, payload: { errorMessage: message }});
     }
@@ -27,16 +28,25 @@ function * getUsersSaga() {
     }
 }
 
+function * getRolesSaga() {
+    try {
+        const roles = yield call(ApiService.getRoles);
+        yield put({ type: TYPE.META, payload: { allRoles: roles.data.content} });
+    } catch({ message }) {
+        yield put({ type: TYPE.META, payload: { errorMessage: message } });
+    }
+}
+
 function * filterItemsSaga({ payload }) {
     yield put({ type: TYPE.META, payload: { disabled: true } });
     yield delay(1000 * 0.5);
     try {
         yield put({ type: TYPE.META, payload });
-        const { name, page, sort, size, sortASC } = yield select(usersSelector);
+        const { name, roles, page, sort, size, sortASC } = yield select(usersSelector);
 
         const items = yield call(
             ApiService.filterUsers,
-            { name },
+            { name, roles },
             { page, sort: `${sort},${sortASC ? 'ASC' : 'DESC'}`, size }
         );
         const { content, totalElements } = items.data;
