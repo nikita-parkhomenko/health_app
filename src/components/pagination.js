@@ -24,7 +24,7 @@ const Paginate = ({ activePage, onChange, totalItemsCount, ...attr }) => {
 Paginate.defaultProps = {
     itemClass: 'page-item',
     linkClass: 'page-link',
-    itemsCountPerPage: 20,
+    itemsCountPerPage: 10,
     pageRangeDisplayed: 5,
     prevPageText: <FontAwesomeIcon icon={faAngleLeft} />,
     nextPageText: <FontAwesomeIcon icon={faAngleRight} />,

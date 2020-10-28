@@ -41,7 +41,16 @@ class ApiService {
         return instance(`admin-service/users/filter`, {
             method: 'POST',
             data: {},
+            params: {
+                size: 10
+            }
         });
+    }
+    static getRoles() {
+        return instance(`admin-service/roles/filter`, {
+            method: 'POST',
+            data: {}
+        })
     }
     static filterUsers(data, params) {
         return instance('admin-service/users/filter', {
