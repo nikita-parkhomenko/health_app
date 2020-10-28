@@ -52,6 +52,18 @@ class ApiService {
             data: {}
         })
     }
+
+    static loadRoles(name) {
+        return instance(`admin-service/roles/filter`, {
+            method: 'POST',
+            data: {
+                name,
+            }
+        })
+            .then(resp => resp.data.content)
+            .then(roles => roles.map(role => ({ label: role.name }) ))
+    }
+
     static filterUsers(data, params) {
         return instance('admin-service/users/filter', {
             method: "POST",
