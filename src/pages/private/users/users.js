@@ -2,6 +2,7 @@
 // outsource dependencies
 import { Table } from 'reactstrap';
 import AsyncSelect from 'react-select/async';
+import { push } from 'connected-react-router';
 import { Badge, Form, Input } from 'reactstrap';
 import { Container, Row, Col } from 'reactstrap';
 import { Spinner, Alert, Button } from 'reactstrap';
@@ -11,6 +12,7 @@ import { InputGroup, InputGroupAddon } from 'reactstrap';
 
 // local dependencies
 import { TYPE } from './reducer';
+import { createUser } from '../../../routes';
 import Paginate from '../../../components/pagination';
 import { selector as usersSelector } from './reducer';
 import ApiService from '../../../services/api-service';
@@ -30,18 +32,15 @@ const insteadEvent = cb => e => e.preventDefault() || cb(e);
 const Users = () => {
     const dispatch = useDispatch();
     const { items,
-            initialized,
-            disabled,
-            errorMessage,
-            sortASC,
             page,
             name,
             size,
-            allRoles,
+            sortASC,
+            disabled,
+            initialized,
+            errorMessage,
             totalElements,
     } = useSelector(usersSelector);
-
-    const roleOptions = allRoles.map(role => ({ label: role.name }))
 
     const searchByName = useCallback(() => {
         dispatch({ type: TYPE.FILTER_ITEMS, payload: { name, page: 0 } });
@@ -147,7 +146,7 @@ const Users = () => {
                         placeholder="Role"
                         name="selectRoles"
                         isDisabled={disabled}
-                        defaultOptions={roleOptions}
+                        defaultOptions
                         onChange={rolesSelectChange}
                         loadOptions={name => ApiService.loadRoles(name)}
                     />
@@ -156,6 +155,7 @@ const Users = () => {
                     <Button
                         color="success"
                         disabled={disabled}
+                        onClick={() => dispatch(push(createUser.path))}
                     >
                         <FontAwesomeIcon
                             transform="left-5"
@@ -212,8 +212,8 @@ const Users = () => {
                                     />
                                     <ActionButton
                                         text="Delete"
-                                        icon={<FontAwesomeIcon transform="left-3" icon={faTrashAlt} />}
                                         disabled={disabled}
+                                        icon={<FontAwesomeIcon transform="left-3" icon={faTrashAlt} />}
                                     />
                                 </td>
                             </tr>

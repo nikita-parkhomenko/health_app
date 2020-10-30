@@ -11,7 +11,6 @@ function * initializeSaga() {
     yield delay(1000);
     try {
         yield call(getUsersSaga);
-        yield call(getRolesSaga);
     } catch ({ message }) {
         yield put({ type: TYPE.META, payload: { errorMessage: message }});
     }
@@ -25,15 +24,6 @@ function * getUsersSaga() {
         yield put({ type: TYPE.META, payload: { items: content, totalElements } })
     } catch ({ message }) {
         yield put({ type: TYPE.META, payload: { errorMessage: message }});
-    }
-}
-
-function * getRolesSaga() {
-    try {
-        const roles = yield call(ApiService.getRoles);
-        yield put({ type: TYPE.META, payload: { allRoles: roles.data.content} });
-    } catch({ message }) {
-        yield put({ type: TYPE.META, payload: { errorMessage: message } });
     }
 }
 

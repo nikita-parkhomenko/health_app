@@ -17,15 +17,11 @@ import ValidationService from '../../../services/validation-service';
 
 const FORM_NAME = 'logInForm';
 
-const validate = ({ username, password }) => {
+const validate = ({ username }) => {
     const errors = {};
 
     if (!ValidationService.isValidEmail(username)) {
         errors.username =  'You have entered an invalid email address!';
-    }
-
-    if (!ValidationService.isValidPassword(password)) {
-        errors.password = 'You have entered an invalid password!'
     }
 
     return errors;

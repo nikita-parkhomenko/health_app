@@ -61,7 +61,7 @@ class ApiService {
             }
         })
             .then(resp => resp.data.content)
-            .then(roles => roles.map(role => ({ label: role.name }) ))
+            .then(roles => roles.map(role => ({ label: role.name, value: role.name, id: role.id }) ))
     }
 
     static filterUsers(data, params) {
@@ -71,8 +71,18 @@ class ApiService {
             params,
         })
     }
+
+    static createUser(user) {
+        return instance('admin-service/users', {
+            method: 'POST',
+            data: user
+        })
+    }
     static saveTokenToStorage(data) {
         localStorage.setItem('token', JSON.stringify(data));
+    }
+    static getTokenFromStorage() {
+        return localStorage.getItem('token');
     }
 }
 
