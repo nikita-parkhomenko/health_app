@@ -101,13 +101,6 @@ class ApiService {
         return instance(`admin-service/users/${id}`, {
             method: "GET",
         })
-            .then(resp => {
-                const { roles, ...otherProps } = resp.data;
-                return {
-                    ...otherProps,
-                    roles: roles.map(role => ({ value: role.name, label: role.name, ...role }))
-                }
-            })
     }
 
     static saveTokenToStorage(data) {

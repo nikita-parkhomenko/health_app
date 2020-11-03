@@ -47,10 +47,9 @@ function * filterItemsSaga({ payload }) {
     yield put({ type: TYPE.META, payload: { disabled: false } });
 }
 
-function * deleteItemSaga(action) {
+function * deleteItemSaga({ payload: { id } }) {
     yield put({ type: TYPE.META, payload: { disabled: true } });
     try {
-        const { id } = action.payload;
         yield call(ApiService.deleteUser, id);
         yield put({ type: TYPE.FILTER_ITEMS });
     } catch({ message }) {

@@ -77,7 +77,7 @@ const CreateUser = ({ handleSubmit, match: { params } }) => {
                 <Col sm={10}>
                     <h1 className="text-info my-2">User</h1>
                     { errorMessage && <Alert color="danger"> {errorMessage} </Alert> }
-                    <Form onSubmit={() => handleSubmit(submit)} >
+                    <Form onSubmit={handleSubmit(submit)} >
                         <Card className="my-2">
                             <CardHeader className="text-info font-weight-bold">
                                 Main
