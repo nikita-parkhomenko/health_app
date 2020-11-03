@@ -61,7 +61,9 @@ class ApiService {
             }
         })
             .then(resp => resp.data.content)
-            .then(roles => roles.map(role => ({ label: role.name, value: role.name, id: role.id }) ))
+            .then(roles => roles.map(
+                role => ({ label: role.name, value: role.name, id: role.id, name: role.name })
+            ))
     }
 
     static filterUsers(data, params) {
@@ -78,9 +80,40 @@ class ApiService {
             data: user
         })
     }
+
+    static editUser(user) {
+        return instance('admin-service/users', {
+            method: 'PUT',
+            data: user
+        })
+    }
+
+    static deleteUser(id) {
+        return instance('admin-service/users', {
+            method: 'DELETE',
+            data: [{
+                id,
+            }]
+        })
+    }
+
+    static getUserById(id) {
+        return instance(`admin-service/users/${id}`, {
+            method: "GET",
+        })
+            .then(resp => {
+                const { roles, ...otherProps } = resp.data;
+                return {
+                    ...otherProps,
+                    roles: roles.map(role => ({ value: role.name, label: role.name, ...role }))
+                }
+            })
+    }
+
     static saveTokenToStorage(data) {
         localStorage.setItem('token', JSON.stringify(data));
     }
+
     static getTokenFromStorage() {
         return localStorage.getItem('token');
     }

@@ -11,7 +11,7 @@ const Header = () => {
     const { user } = useSelector(appSelector);
 
     return (
-        <Container className="bg-primary d-flex justify-content-center" fluid={true}>
+        <Container className="bg-primary d-flex justify-content-center" fluid>
             <Col sm={10} >
                 <Row className="d-flex justify-content-end">
                     <h5 className='text-white p-3'>{user.name}</h5>

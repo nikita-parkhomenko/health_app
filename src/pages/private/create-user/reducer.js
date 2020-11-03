@@ -4,11 +4,11 @@ export const TYPE = (prefix => ({
     CLEAR: `${prefix}CLEAR`,
     // complex actions
     INITIALIZE: `${prefix}INITIALIZE`,
-    CREATE_USER: `${prefix}CREATE_USER`
+    CREATE_USER: `${prefix}CREATE_USER`,
 }))('@create-user/');
 
 const initial = {
-    allRoles: [],
+    user: {},
 
     disabled: false,
     initialized: false,

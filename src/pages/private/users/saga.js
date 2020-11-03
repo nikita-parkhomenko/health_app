@@ -47,7 +47,20 @@ function * filterItemsSaga({ payload }) {
     yield put({ type: TYPE.META, payload: { disabled: false } });
 }
 
+function * deleteItemSaga(action) {
+    yield put({ type: TYPE.META, payload: { disabled: true } });
+    try {
+        const { id } = action.payload;
+        yield call(ApiService.deleteUser, id);
+        yield put({ type: TYPE.FILTER_ITEMS });
+    } catch({ message }) {
+        yield put({ type: TYPE.META, payload: { errorMessage: message } });
+    }
+    yield put({ type: TYPE.META, payload: { disabled: false } });
+}
+
 export default function * () {
     yield takeEvery(TYPE.INITIALIZE, initializeSaga);
     yield takeEvery(TYPE.FILTER_ITEMS, filterItemsSaga);
+    yield takeEvery(TYPE.DELETE_ITEM, deleteItemSaga);
 }

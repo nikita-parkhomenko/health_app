@@ -70,6 +70,9 @@ const Users = () => {
         dispatch({ type: TYPE.FILTER_ITEMS, payload: { roles: role ? [role.label] : []} })
     }, [dispatch]);
 
+    const deleteUser = useCallback(id => dispatch({ type: TYPE.DELETE_ITEM, payload: { id }}), [dispatch]);
+    const pushToEditPage = useCallback(id => dispatch(push(createUser.link(id))), [dispatch]);
+
     useEffect(() => {
         dispatch({ type:TYPE.INITIALIZE });
         return () => dispatch({ type: TYPE.CLEAR })
@@ -155,7 +158,7 @@ const Users = () => {
                     <Button
                         color="success"
                         disabled={disabled}
-                        onClick={() => dispatch(push(createUser.path))}
+                        onClick={() => dispatch(push(createUser.link()))}
                     >
                         <FontAwesomeIcon
                             transform="left-5"
@@ -207,12 +210,16 @@ const Users = () => {
                                 <td>
                                     <ActionButton
                                         text="Edit"
+                                        id={user.id}
                                         disabled={disabled}
+                                        clicked={pushToEditPage}
                                         icon={<FontAwesomeIcon transform="left-3" icon={faPencilAlt} />}
                                     />
                                     <ActionButton
+                                        id={user.id}
                                         text="Delete"
                                         disabled={disabled}
+                                        clicked={deleteUser}
                                         icon={<FontAwesomeIcon transform="left-3" icon={faTrashAlt} />}
                                     />
                                 </td>
