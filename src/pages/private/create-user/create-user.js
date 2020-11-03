@@ -1,9 +1,10 @@
 
 // outsource dependencies
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
-import {Container, Row, Col, Spinner} from 'reactstrap';
+import React, { useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Container, Row, Col, Spinner, Alert } from 'reactstrap';
 import { Card, Button, CardHeader, Form, CardBody } from 'reactstrap';
 
 // local dependencies
@@ -41,28 +42,28 @@ const validate = values => {
     }
 
     if (values.suffix === undefined) {
-        errors.suffix = 'Required'
+        errors.suffix = 'Suffix is Required'
     }
 
     if (values.roles === undefined) {
-        errors.roles = 'Required'
+        errors.roles = 'Roles is Required'
     }
 
     return errors;
 }
 
-const CreateUser = ({ handleSubmit }) => {
+const CreateUser = ({ handleSubmit, match: { params } }) => {
     const dispatch = useDispatch();
-    const { disabled, initialized } = useSelector(createUserSelector);
+    const { disabled, initialized, errorMessage } = useSelector(createUserSelector);
 
     useEffect(() => {
-        dispatch({ type: TYPE.INITIALIZE });
+        dispatch({ type: TYPE.INITIALIZE, payload: { userId: params.id} });
         return () => dispatch({ type: TYPE.CLEAR });
-    }, [dispatch]);
+    }, [dispatch, params]);
 
-    const submit = payload => {
-        dispatch({ type: TYPE.CREATE_USER, payload });
-    }
+    const submit = useCallback(payload => {
+        dispatch({ type: TYPE.CREATE_USER, payload: { ...payload, suffix: payload.suffix.value } });
+    }, [dispatch]);
 
     if (!initialized) {
         return <div className="d-flex justify-content-center py-5">
@@ -75,7 +76,8 @@ const CreateUser = ({ handleSubmit }) => {
             <Row>
                 <Col sm={10}>
                     <h1 className="text-info my-2">User</h1>
-                    <Form onSubmit={handleSubmit(submit)}>
+                    { errorMessage && <Alert color="danger"> {errorMessage} </Alert> }
+                    <Form onSubmit={() => handleSubmit(submit)} >
                         <Card className="my-2">
                             <CardHeader className="text-info font-weight-bold">
                                 Main
@@ -145,7 +147,12 @@ const CreateUser = ({ handleSubmit }) => {
     );
 }
 
-export default reduxForm({
-    form: FORM_NAME,
+const mapStateToProps = state => ({
+    initialValues: state.createUser.user,
+})
+
+export default connect(mapStateToProps)(reduxForm({
     validate,
-})(CreateUser);
+    form: FORM_NAME,
+    enableReinitialize : true,
+})(CreateUser));
