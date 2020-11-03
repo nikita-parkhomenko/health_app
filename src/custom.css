@@ -1,0 +1,7 @@
+.required-asterisk:after {
+    content: "*";
+    color: #f05050;
+    line-height: 0;
+    font-size: 1.5em;
+    display: inline-block;
+}

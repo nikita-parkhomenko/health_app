@@ -5,6 +5,7 @@ export const TYPE = (prefix => ({
     // complex actions
     INITIALIZE: `${prefix}INITIALIZE`,
     FILTER_ITEMS: `${prefix}FILTER_ITEMS`,
+    DELETE_ITEM: `${prefix}DELETE_ITEM`,
 }))('@users/');
 
 const initial = {
@@ -18,7 +19,6 @@ const initial = {
     roles: [],
     name: '',
 
-    allRoles: [],
     totalElements: 0,
 
     disabled: false,

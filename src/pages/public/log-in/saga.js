@@ -1,16 +1,28 @@
 
 // outsource dependencies
-import { push } from 'connected-react-router';
 import { takeEvery, put, delay, call } from 'redux-saga/effects';
 
 // local dependencies
 import { TYPE } from './reducer';
+import { users } from '../../../routes';
+import { push } from 'connected-react-router';
 import { getUserSaga } from '../../../app-saga';
 import ApiService from '../../../services/api-service';
 import { instance } from '../../../services/axios-instance';
 
 function * initializeSaga() {
-    yield delay(1000 * 2);
+    yield delay(1000);
+    try {
+        const tokens = yield call(ApiService.getTokenFromStorage);
+        if (tokens) {
+            const { accessToken } = tokens;
+            instance.defaults.headers['Authorization'] = 'Bearer ' + accessToken;
+            yield call(getUserSaga);
+            yield put(push(users.path));
+        }
+    } catch({ message }) {
+        yield put({ type: TYPE.META, payload: { errorMessage: message } });
+    }
     yield put({ type: TYPE.META, payload: { initialized: true }})
 }
 
@@ -30,7 +42,7 @@ function * logInSaga({ payload }) {
         instance.defaults.headers['Authorization'] = 'Bearer ' + accessToken;
 
         yield call(getUserSaga);
-        yield put(push('/user'));
+        yield put(push(users.path));
     } catch({ message }) {
         yield put({ type:TYPE.META, payload: { errorMessage: message }});
     }

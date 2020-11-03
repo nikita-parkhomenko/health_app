@@ -3,12 +3,12 @@ export const logIn = {
     link: () => `/log-in`,
 }
 
-export const user = {
-    path: '/user',
-    link: () => '/user',
-}
-
 export const users = {
     path: '/users',
     link: () => '/users',
+}
+
+export const createUser = {
+    path: '/create-user',
+    link: () => '/create-user',
 }
