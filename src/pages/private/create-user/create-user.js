@@ -13,7 +13,7 @@ import CustomInput from '../../../components/custom-input';
 import { selector as createUserSelector } from './reducer';
 import ReduxFormSelect from '../../../components/redux-form-select';
 import ValidationService from '../../../services/validation-service';
-import ReactReduxAsyncSelect from '../../../components/redux-form-async-select';
+import ReactReduxAsyncSelect, { getOptionName } from '../../../components/redux-form-async-select';
 
 const FORM_NAME = 'createUserName';
 const suffixOptions = [
@@ -120,6 +120,8 @@ const CreateUser = ({ handleSubmit, match: { params } }) => {
                                 <Field
                                     name="roles"
                                     component={ReactReduxAsyncSelect}
+                                    getOptionValue={getOptionName}
+                                    getOptionLabel={getOptionName}
                                     label={<strong className="required-asterisk"> Chose your roles </strong>}
                                 />
                                 <Field
