@@ -76,6 +76,7 @@ const Users = () => {
     }, [dispatch]);
 
     const deleteUser = useCallback(id => dispatch({ type: TYPE.DELETE_ITEM, payload: { id }}), [dispatch]);
+
     const pushToEditPage = useCallback(id => dispatch(push(createUser.link(id))), [dispatch]);
 
     useEffect(() => {
