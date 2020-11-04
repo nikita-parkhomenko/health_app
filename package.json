@@ -16,6 +16,7 @@
     "connected-react-router": "^6.8.0",
     "history": "^4.10.1",
     "prop-types": "^15.7.2",
+    "query-string": "^6.13.6",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-js-pagination": "^3.0.3",

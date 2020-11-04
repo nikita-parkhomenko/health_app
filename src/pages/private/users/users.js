@@ -3,6 +3,7 @@
 import { Table } from 'reactstrap';
 import AsyncSelect from 'react-select/async';
 import { push } from 'connected-react-router';
+import { useLocation } from 'react-router-dom';
 import { Badge, Form, Input } from 'reactstrap';
 import { Container, Row, Col } from 'reactstrap';
 import { Spinner, Alert, Button } from 'reactstrap';
@@ -42,29 +43,33 @@ const Users = () => {
             totalElements,
     } = useSelector(usersSelector);
 
+    const location = useLocation();
+
     const searchByName = useCallback(() => {
         dispatch({ type: TYPE.FILTER_ITEMS, payload: { name, page: 0 } });
     }, [dispatch, name]);
 
     const onChangePage = useCallback(page => dispatch({
-        type: TYPE.FILTER_ITEMS, payload: { page }
-    }), [dispatch]);
+        type: TYPE.FILTER_ITEMS,
+        payload: { page },
+        location
+    }), [dispatch, location]);
 
     const sortUsers = useCallback(name => {
         dispatch({ type: TYPE.FILTER_ITEMS, payload: { sort: name, sortASC: !sortASC } });
     }, [dispatch, sortASC]);
 
     const changeSearchFieldHandler = useCallback(value => {
-        dispatch({ type: TYPE.META, payload: { name: value.trimLeft() } });
-    }, [dispatch]);
+        dispatch({ type: TYPE.META, payload: { name: value.trimLeft() }, location });
+    }, [dispatch, location]);
 
     const clearName = useCallback(() => {
-        dispatch({ type: TYPE.FILTER_ITEMS, payload: { name: '' } })
-    }, [dispatch]);
+        dispatch({ type: TYPE.FILTER_ITEMS, payload: { name: '' }, location })
+    }, [dispatch, location]);
 
     const itemsCountChange = useCallback(size => {
-        dispatch({ type: TYPE.FILTER_ITEMS, payload: { size: +size } })
-    }, [dispatch]);
+        dispatch({ type: TYPE.FILTER_ITEMS, payload: { size: +size }, location })
+    }, [dispatch, location]);
 
     const rolesSelectChange = useCallback(role => {
         dispatch({ type: TYPE.FILTER_ITEMS, payload: { roles: role ? [role.label] : []} })
@@ -74,9 +79,9 @@ const Users = () => {
     const pushToEditPage = useCallback(id => dispatch(push(createUser.link(id))), [dispatch]);
 
     useEffect(() => {
-        dispatch({ type:TYPE.INITIALIZE });
+        dispatch({ type:TYPE.INITIALIZE, payload: { location } });
         return () => dispatch({ type: TYPE.CLEAR })
-    }, [dispatch]);
+    }, [dispatch, location]);
 
     if (!initialized) {
         return <div className="d-flex justify-content-center py-5">

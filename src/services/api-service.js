@@ -37,14 +37,12 @@ class ApiService {
     static getUser() {
         return instance.get(`/auth-service/auth/users/me`)
     }
-    static getUsers() {
+    static getUsers(data, params) {
         return instance(`admin-service/users/filter`, {
             method: 'POST',
-            data: {},
-            params: {
-                size: 10
-            }
-        });
+            data,
+            params,
+        })
     }
     static getRoles() {
         return instance(`admin-service/roles/filter`, {
